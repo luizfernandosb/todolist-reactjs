@@ -4,12 +4,27 @@ import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./index.css";
 
 function App() {
   const [listTodo, setListTodo] = useState([]);
   const todoRef = useRef("");
+  const todoStorage = JSON.parse(localStorage.getItem("listaDeTarefas")) || [];
+
+
+   
+
+
+  const getTodosOnLoad = () => {
+    const todoStorage =
+      JSON.parse(localStorage.getItem("listaDeTarefas")) || [];
+    setListTodo(todoStorage);
+  };
+
+   useEffect(() => {
+    getTodosOnLoad();
+  }, []);
 
   const gerarIdRandomico = () => {
     const caracteres =
@@ -29,11 +44,15 @@ function App() {
       id: gerarIdRandomico(),
       completed: false,
     };
+    localStorage.setItem(
+      "listaDeTarefas",
+      JSON.stringify([...listTodo, newTodo])
+    );
     setListTodo([...listTodo, newTodo]);
 
     toast("Tarefa adicionada com sucesso!", {
-      position: "top-right",
-      autoClose: 5000,
+      position: "bottom-right",
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -46,15 +65,15 @@ function App() {
   };
 
   const handleDelete = (id) => {
-    const newTodos = [...listTodo];
-    const filteredTodos = newTodos.filter((todo) =>
+    const filteredTodos = todoStorage.filter((todo) =>
       todo.id !== id ? todo : null
     );
     setListTodo(filteredTodos);
+    localStorage.setItem("listaDeTarefas", JSON.stringify(filteredTodos));
 
     toast.error("Tarefa deletada com sucesso.", {
-      position: "top-right",
-      autoClose: 5000,
+      position: "bottom-right",
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -65,14 +84,16 @@ function App() {
   };
 
   const handleComplete = (id) => {
-    const newTodos = [...listTodo];
-    newTodos.map((todo) =>
-      todo.id === id ? (todo.completed = !todo.completed) : todo
+    const updatedTodos = todoStorage.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
-    setListTodo(newTodos);
+
+    setListTodo(updatedTodos);
+    localStorage.setItem("listaDeTarefas", JSON.stringify(updatedTodos));
+
     toast.success("Tarefa concluída com sucesso!", {
-      position: "top-right",
-      autoClose: 5000,
+      position: "bottom-right",
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -82,13 +103,13 @@ function App() {
     });
   };
 
-  const pendingTodos = [...listTodo].filter((todo) => !todo.completed);
+  const pendingTodos = [...todoStorage].filter((todo) => !todo.completed);
 
-  const completedTodos = [...listTodo].filter((todo) => todo.completed);
+  const completedTodos = [...todoStorage].filter((todo) => todo.completed);
 
   return (
     <div id="container">
-      <h1>Lista de tarefas</h1>
+      <h1>TodEx List</h1>
       {/* status das tarefas */}
       <div id="status">
         <p>
