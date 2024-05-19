@@ -1,4 +1,3 @@
-import "./App.css";
 import { FaCheck, FaTrash } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -12,17 +11,13 @@ function App() {
   const todoRef = useRef("");
   const todoStorage = JSON.parse(localStorage.getItem("listaDeTarefas")) || [];
 
-
-   
-
-
   const getTodosOnLoad = () => {
     const todoStorage =
       JSON.parse(localStorage.getItem("listaDeTarefas")) || [];
     setListTodo(todoStorage);
   };
 
-   useEffect(() => {
+  useEffect(() => {
     getTodosOnLoad();
   }, []);
 
@@ -103,6 +98,7 @@ function App() {
     });
   };
 
+
   const pendingTodos = [...todoStorage].filter((todo) => !todo.completed);
 
   const completedTodos = [...todoStorage].filter((todo) => todo.completed);
@@ -149,18 +145,21 @@ function App() {
             ))}
           </>
         )}
-      </div>
-      {/* adicionar nova tarefa */}
-      <form action="#" id="form" className="form__group field">
-        <div className="form__group field">
+        <div id="input-container">
           <input
             type="text"
             ref={todoRef}
-            className="form__field"
-            placeholder="Name"
+            className="input"
+            placeholder="Tarefa"
             required=""
+            
           />
-          <label className="form__label">Tarefa</label>
+          <span id="addicon" onClick={handleTodo}>+</span>
+        </div>
+      </div>
+      {/* adicionar nova tarefa */}
+      <form action="#" id="form">
+        <div>
           <button onClick={handleTodo} type="submit" className="btn">
             Adicionar
           </button>
